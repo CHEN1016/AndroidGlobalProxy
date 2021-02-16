@@ -6,16 +6,20 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+
+    // adb shell pm grant com.chen.shellproxy android.permission.WRITE_SECURE_SETTINGS
 
     private static final String TAG = "MainActivity";
 
@@ -31,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
         TextView ipAddrTextView = findViewById(R.id.ip_address);
         TextView ipPortTextView = findViewById(R.id.port_number);
+
+        int i = ContextCompat.checkSelfPermission(this, permissionName);
+
+        Log.d(TAG, "checkPermission: " + i);
 
 
         Button catButton = findViewById(R.id.cat_proxy);
@@ -77,15 +85,9 @@ public class MainActivity extends AppCompatActivity {
      */
     boolean checkPermission() {
         boolean requested = false;
-        PackageManager pm = this.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
-            String[] requestedPermissions = packageInfo.requestedPermissions;
-            if (Arrays.asList(requestedPermissions).contains(permissionName)) {
-                requested = true;
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+        int granted = ContextCompat.checkSelfPermission(this, permissionName);
+        if (granted == PackageManager.PERMISSION_GRANTED) {
+            requested = true;
         }
         return requested;
 
