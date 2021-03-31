@@ -19,8 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.kongzue.dialogx.DialogX;
 import com.kongzue.dialogx.dialogs.CustomDialog;
@@ -38,9 +41,15 @@ public class MainActivity extends AppCompatActivity {
 
     final String permissionName = Manifest.permission.WRITE_SECURE_SETTINGS; //android.permission.WRITE_SECURE_SETTINGS
 
+
+    ProxyViewModel proxyViewModel;
+
+    static ActionBar actionBar;
+
     ContentResolver contentResolver;
 
     Button btnAuthorize;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +57,18 @@ public class MainActivity extends AppCompatActivity {
         contentResolver = this.getContentResolver();
         DialogX.init(this);
 
+        actionBar = getSupportActionBar();
+
+        proxyViewModel = new ViewModelProvider(this).get(ProxyViewModel.class);
+
+        proxyViewModel.getProxyStrLiveData().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                actionBar.setTitle(s);
+            }
+        });
+
+        proxyViewModel.setProxyStrLiveData(getGlobalProxy());
 
         if (checkPermission()) {
             setContentView(R.layout.activity_main);
@@ -66,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.add_proxy:
                 CustomDialog.build()
@@ -174,16 +194,17 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 设置全局代理
      *
-     * @param ipAndPort
+     * @param ipAndPort 代理
      */
     void setGlobalProxy(String ipAndPort) {
         Settings.Global.putString(contentResolver, Settings.Global.HTTP_PROXY, ipAndPort);
+        proxyViewModel.setProxyStrLiveData(ipAndPort);
     }
 
     /**
      * 获取全局代理
      *
-     * @return
+     * @return 返回代理
      */
     String getGlobalProxy() {
         return Settings.Global.getString(contentResolver, Settings.Global.HTTP_PROXY);
