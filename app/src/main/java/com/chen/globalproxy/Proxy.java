@@ -15,8 +15,6 @@ public class Proxy {
     @ColumnInfo(name = "host")
     private String host;
 
-    @ColumnInfo(name = "port")
-    private Integer port;
 
     @ColumnInfo(name = "modified_at")
     private Date modifiedAt;
@@ -26,16 +24,14 @@ public class Proxy {
     }
 
     // room只能识别一个构造器函数，定义多个需要使用Ignore标签
-    @Ignore
-    public Proxy(String host, Integer port) {
-        this.host = host;
-        this.port = port;
-    }
+//    @Ignore
+//    public Proxy(String host) {
+//        this.host = host;
+//    }
 
     @Ignore
-    public Proxy(String host, Integer port, Date modifiedAt) {
+    public Proxy(String host, Date modifiedAt) {
         this.host = host;
-        this.port = port;
         this.modifiedAt = modifiedAt;
     }
 
@@ -55,14 +51,6 @@ public class Proxy {
         this.host = host;
     }
 
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
     public Date getModifiedAt() {
         return modifiedAt;
     }
@@ -70,4 +58,5 @@ public class Proxy {
     public void setModifiedAt(Date modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
+
 }

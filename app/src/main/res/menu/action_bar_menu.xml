@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item
         android:id="@+id/add_proxy"
-        android:title="新增代理" />
-<!--    <item-->
-    <!--        android:id="@+id/delete_all"-->
-    <!--        android:title="清空全部" />-->
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="新增"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/reset_proxy"
+        android:icon="@drawable/ic_baseline_block_24"
+        android:title="取消"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/authorize"
+        android:title="获取权限" />
     <item
         android:id="@+id/cat_proxy"
         android:title="查看代理" />
     <item
-        android:id="@+id/reset_proxy"
-        android:title="取消代理" />
+        android:id="@+id/delete_all"
+        android:title="清空历史" />
+    <item
+        android:id="@+id/settings"
+        android:title="设置端口" />
+
 </menu>

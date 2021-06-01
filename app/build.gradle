@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
 }
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 30
@@ -45,11 +46,11 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    def lifecycle_version = "2.3.0"
 
-    // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    // LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.3.0"
 
+}
+repositories {
+    mavenCentral()
 }
