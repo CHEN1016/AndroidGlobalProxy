@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,12 @@ public class EditPortDialogFragment extends DialogFragment {
         builder.setTitle("请输入端口")
                 .setPositiveButton("确认", (dialog, which) -> {
                     Log.d(TAG, "positive onClick: " + portEditText.getText());
-                    listener.onDialogPositiveClick(Integer.valueOf(portEditText.getText().toString()));
+                    String editTextValue = portEditText.getText().toString();
+                    if (editTextValue.equals("") || editTextValue.isEmpty()) {
+                        editTextValue = "8888";
+                    }
+                    listener.onDialogPositiveClick(Integer.valueOf(editTextValue));
+                    Toast.makeText(getActivity(), "修改端口为：" + editTextValue + "，请重新设置代理地址！", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("取消", null);
         return builder.create();

@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
 
         proxyViewModel.getProxyStrLiveData().observe(this, s -> actionBar.setTitle("当前 " + s));
 
-        sp = getSharedPreferences("custom_config", Context.MODE_PRIVATE);
+        sp = getSharedPreferences(ProxyViewModel.CUSTOM_CONFIG_KEY, Context.MODE_PRIVATE);
 
         proxyViewModel.getPortLiveData().observe(this, integer -> {
             SharedPreferences.Editor editor = sp.edit();
-            editor.putInt("port", integer);
+            editor.putInt(ProxyViewModel.PROXY_PORT_KEY, integer);
             editor.apply();//立即更新sp对象中的值，但还是会异步写入磁盘中
             //commit()会同步写入磁盘，避免在主线程中调用
         });

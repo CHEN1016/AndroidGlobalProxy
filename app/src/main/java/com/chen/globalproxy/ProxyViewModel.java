@@ -17,13 +17,14 @@ import java.util.List;
 
 public class ProxyViewModel extends AndroidViewModel {
 
+    public static final String CUSTOM_CONFIG_KEY = "custom_config";
+    public static final String PROXY_PORT_KEY = "proxy_key";
+
     private final ProxyRepository proxyRepository;
 
     private MutableLiveData<String> proxyStrLiveData;
 
     private MutableLiveData<Integer> portLiveData;
-
-//    private final Integer port = 2333; //代理端口，暂时写死
 
     private final Application application;
 
@@ -45,8 +46,8 @@ public class ProxyViewModel extends AndroidViewModel {
     public MutableLiveData<Integer> getPortLiveData() {
         if (portLiveData == null) {
             portLiveData = new MutableLiveData<>();
-            SharedPreferences sp = application.getSharedPreferences("custom_config", Context.MODE_PRIVATE);
-            int port = sp.getInt("proxy_port", 8888);
+            SharedPreferences sp = application.getSharedPreferences(CUSTOM_CONFIG_KEY, Context.MODE_PRIVATE);
+            int port = sp.getInt(PROXY_PORT_KEY, 8888);
             portLiveData.setValue(port);
         }
         return portLiveData;
