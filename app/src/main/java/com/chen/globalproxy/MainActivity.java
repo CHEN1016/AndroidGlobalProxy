@@ -7,39 +7,28 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.chen.globalproxy.databinding.ActivityMainBinding;
 import com.kongzue.dialogx.DialogX;
-import com.kongzue.dialogx.dialogs.CustomDialog;
 import com.kongzue.dialogx.dialogs.InputDialog;
 import com.kongzue.dialogx.dialogs.MessageDialog;
-import com.kongzue.dialogx.interfaces.OnBindView;
-import com.kongzue.dialogx.interfaces.OnDialogButtonClickListener;
-import com.kongzue.dialogx.interfaces.OnInputDialogButtonClickListener;
 
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements EditPortDialogFragment.EditPortDialogListener {
 
@@ -54,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
     ProxyViewModel proxyViewModel;
 
     static ActionBar actionBar;
-
-    RecyclerView recyclerView;
 
     MyAdapter myAdapter;
 
@@ -87,12 +74,13 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
 
         proxyViewModel.setProxyStrLiveData(getGlobalProxy());
 
-        setContentView(R.layout.activity_main);
-        recyclerView = findViewById(R.id.proxyRecylerView);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        com.chen.globalproxy.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.proxyRecylerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         myAdapter = new MyAdapter(this, proxyViewModel);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(myAdapter);
+        binding.proxyRecylerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.proxyRecylerView.setAdapter(myAdapter);
         proxyViewModel.getProxyLiveData().observe(this, proxies -> {
             myAdapter.setProxyList(proxies);
             myAdapter.notifyDataSetChanged();

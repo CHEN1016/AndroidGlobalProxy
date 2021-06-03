@@ -6,24 +6,25 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.chen.globalproxy.databinding.DialogEditPortBinding;
+
 import org.jetbrains.annotations.NotNull;
 
 
 public class EditPortDialogFragment extends DialogFragment {
 
+    private DialogEditPortBinding binding;
+
     private static final String TAG = "EditPortDialogFragment";
 
     EditPortDialogListener listener;
 
-    private EditText portEditText;
 
     public interface EditPortDialogListener {
         void onDialogPositiveClick(Integer port);
@@ -44,27 +45,23 @@ public class EditPortDialogFragment extends DialogFragment {
     @NotNull
     @Override
     public Dialog onCreateDialog(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-
+        binding = DialogEditPortBinding.inflate(LayoutInflater.from(getContext()));
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater layoutInflater = requireActivity().getLayoutInflater();
-
-        View view = layoutInflater.inflate(R.layout.dialog_edit_port, null);
-        portEditText = view.findViewById(R.id.port_number);
         Bundle bundle = getArguments();
         if (bundle != null) {
             int port = bundle.getInt("proxy_port");
-            portEditText.setText(String.valueOf(port));
+            binding.portNumber.setText(String.valueOf(port));
         }
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         builder.setTitle("请输入端口")
                 .setPositiveButton("确认", (dialog, which) -> {
-                    Log.d(TAG, "positive onClick: " + portEditText.getText());
-                    String editTextValue = portEditText.getText().toString();
+                    Log.d(TAG, "positive onClick: " + binding.portNumber.getText());
+                    String editTextValue = binding.portNumber.getText().toString();
                     if (editTextValue.equals("") || editTextValue.isEmpty()) {
                         editTextValue = "8888";
                     }
                     listener.onDialogPositiveClick(Integer.valueOf(editTextValue));
-                    Toast.makeText(getActivity(), "修改端口为：" + editTextValue + "，请重新设置代理地址！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "修改端口为：" + editTextValue + "，请重设代理！", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("取消", null);
         return builder.create();
