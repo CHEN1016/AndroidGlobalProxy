@@ -66,4 +66,11 @@ public class EditPortDialogFragment extends DialogFragment {
                 .setNegativeButton("取消", null);
         return builder.create();
     }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
