@@ -3,10 +3,10 @@
 
     <item
         android:id="@+id/set_proxy"
-        android:title="设为代理" />
+        android:title="@string/set_proxy" />
 
     <item
         android:id="@+id/delete_proxy"
-        android:title="删除代理" />
+        android:title="@string/delete_proxy" />
 
 </menu>

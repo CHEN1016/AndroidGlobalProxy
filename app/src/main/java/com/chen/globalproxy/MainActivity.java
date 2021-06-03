@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
                         .setCancelable(false)
                         .show();
                 break;
-            case R.id.settings: // 菜单栏设置
+            case R.id.setting_port: // 菜单栏设置
                 EditPortDialogFragment editPortDialogFragment = new EditPortDialogFragment();
                 Bundle bundle = new Bundle();
                 Integer value = proxyViewModel.getPortLiveData().getValue();

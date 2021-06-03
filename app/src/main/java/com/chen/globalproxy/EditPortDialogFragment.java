@@ -12,14 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.chen.globalproxy.databinding.DialogEditPortBinding;
+import com.chen.globalproxy.databinding.DialogPortEditBinding;
 
 import org.jetbrains.annotations.NotNull;
 
 
 public class EditPortDialogFragment extends DialogFragment {
 
-    private DialogEditPortBinding binding;
+    private DialogPortEditBinding binding;
 
     private static final String TAG = "EditPortDialogFragment";
 
@@ -45,18 +45,18 @@ public class EditPortDialogFragment extends DialogFragment {
     @NotNull
     @Override
     public Dialog onCreateDialog(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        binding = DialogEditPortBinding.inflate(LayoutInflater.from(getContext()));
+        binding = DialogPortEditBinding.inflate(LayoutInflater.from(getContext()));
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         Bundle bundle = getArguments();
         if (bundle != null) {
             int port = bundle.getInt("proxy_port");
-            binding.portNumber.setText(String.valueOf(port));
+            binding.portEditText.setText(String.valueOf(port));
         }
         builder.setView(binding.getRoot());
         builder.setTitle("请输入端口")
                 .setPositiveButton("确认", (dialog, which) -> {
-                    Log.d(TAG, "positive onClick: " + binding.portNumber.getText());
-                    String editTextValue = binding.portNumber.getText().toString();
+                    Log.d(TAG, "positive onClick: " + binding.portEditText.getText());
+                    String editTextValue = binding.portEditText.getText().toString();
                     if (editTextValue.equals("") || editTextValue.isEmpty()) {
                         editTextValue = "8888";
                     }

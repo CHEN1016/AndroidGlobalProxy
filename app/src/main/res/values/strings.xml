@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Proxy</string>
+    <string name="default_port">默认为8888</string>
+    <string name="set_proxy">设为代理</string>
+    <string name="delete_proxy">删除代理</string>
+    <string name="add_proxy">新增</string>
+    <string name="reset_proxy">取消代理</string>
+    <string name="authorize">获取权限</string>
+    <string name="cat_proxy">查看代理</string>
+    <string name="delete_all">清空历史</string>
+    <string name="setting_port">设置端口</string>
 </resources>
