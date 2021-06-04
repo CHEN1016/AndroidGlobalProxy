@@ -12,11 +12,11 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,13 +24,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chen.globalproxy.databinding.ActivityMainBinding;
-import com.kongzue.dialogx.DialogX;
-import com.kongzue.dialogx.dialogs.InputDialog;
-import com.kongzue.dialogx.dialogs.MessageDialog;
 
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements EditPortDialogFragment.EditPortDialogListener {
+public class MainActivity extends AppCompatActivity implements EditPortDialogFragment.EditPortDialogListener, NewProxyDialogFragment.NewProxyDialogListener {
 
     private static final String TAG = "MainActivity";
 
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         contentResolver = this.getContentResolver();
-        DialogX.init(this);
 
         actionBar = getSupportActionBar();
 
@@ -99,24 +95,18 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_proxy:
-                new InputDialog("新增代理", "请输入代理地址", "确定", "取消", "10.1.")
-                        .setCancelable(false)
-                        .setOkButton((baseDialog, v, inputStr) -> {
-                            String proxyStr = inputStr + ":" + proxyViewModel.getPortLiveData().getValue();
-                            Toast.makeText(MainActivity.this, "当前代理为:" + proxyStr, Toast.LENGTH_SHORT).show();
-                            proxyViewModel.setProxyStrLiveData(proxyStr);
-                            proxyViewModel.insertProxy(new Proxy(inputStr, new Date()));
-                            return false;
-                        })
-                        .show();
+                NewProxyDialogFragment newProxyDialogFragment = new NewProxyDialogFragment();
+                newProxyDialogFragment.show(getSupportFragmentManager(), "id_dialog");
                 break;
             case R.id.delete_all:
-                MessageDialog.show("是否清空代理记录？", null, "确定", "取消")
-                        .setOkButton((baseDialog, v) -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("是否清空代理记录？")
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
                             proxyViewModel.clearProxy();
-                            return false;
-                        });
-                Toast.makeText(MainActivity.this, "删除全部", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "删除全部", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton(R.string.cancel, null)
+                        .show();
                 break;
             case R.id.cat_proxy:
                 Toast.makeText(MainActivity.this, "当前代理为:" + getGlobalProxy(), Toast.LENGTH_SHORT).show();
@@ -126,21 +116,19 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
                 Toast.makeText(MainActivity.this, "已取消代理，请重连WIFI", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.authorize:
-                MessageDialog messageDialog = new MessageDialog("授权方式", "直接授权需要你的设备已经root", "直接授权", "取消", "使用ADB");
-                messageDialog.setOtherButton((baseDialog, v) -> {
-                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData mClipData = ClipData.newPlainText("Label", msg);
-                    cm.setPrimaryClip(mClipData);
-                    Toast.makeText(MainActivity.this, "已将ADB命令复制到剪贴板", Toast.LENGTH_SHORT).show();
-                    return false;
-                });
-                messageDialog.setOkButton((baseDialog, v) -> {
-                    Toast.makeText(MainActivity.this, "直接授权，请授予Root权限", Toast.LENGTH_SHORT).show();
-                    MyTool.execRootCmd(pm);
-                    return false;
-                });
-                messageDialog.setButtonOrientation(LinearLayout.VERTICAL)
-                        .setCancelable(false)
+                AlertDialog.Builder authBuilder = new AlertDialog.Builder(this);
+                authBuilder.setTitle("授权方式").setMessage("直接授权需要您的设备已经root")
+                        .setPositiveButton("授权", (dialog, which) -> {
+                            Toast.makeText(MainActivity.this, "请授予Root权限", Toast.LENGTH_SHORT).show();
+                            MyTool.execRootCmd(pm);
+                        })
+                        .setNeutralButton("使用ADB", (dialog, which) -> {
+                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData mClipData = ClipData.newPlainText("Label", msg);
+                            cm.setPrimaryClip(mClipData);
+                            Toast.makeText(MainActivity.this, "已将ADB命令复制到剪贴板", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("取消", null)
                         .show();
                 break;
             case R.id.setting_port: // 菜单栏设置
@@ -153,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
                 bundle.putInt("proxy_port", value);
                 editPortDialogFragment.setArguments(bundle);
                 editPortDialogFragment.show(getSupportFragmentManager(), "port_dialog");
-
                 break;
             default:
                 break;
@@ -199,8 +186,19 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
 
 
     @Override
-    public void onDialogPositiveClick(Integer port) {
-        Log.d(TAG, "onDialogPositiveClick: " + port);
+    public void editPortDialogPositive(Integer port) {
+        Log.d(TAG, "editPortDialogPositive: " + port);
         proxyViewModel.getPortLiveData().setValue(port);
+    }
+
+    @Override
+    public void newProxyDialogPositive(String ipAddress) {
+        Log.d(TAG, "newProxyDialogPositive: " + ipAddress);
+        String proxyStr = ipAddress + ":" + proxyViewModel.getPortLiveData().getValue();
+        Toast.makeText(MainActivity.this, "当前代理为:" + proxyStr, Toast.LENGTH_SHORT).show();
+        proxyViewModel.setProxyStrLiveData(proxyStr);
+        proxyViewModel.insertProxy(new Proxy(ipAddress, new Date()));
+
+
     }
 }
