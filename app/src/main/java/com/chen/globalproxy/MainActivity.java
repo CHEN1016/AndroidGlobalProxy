@@ -68,7 +68,12 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
             //commit()会同步写入磁盘，避免在主线程中调用
         });
 
-        proxyViewModel.setProxyStrLiveData(getGlobalProxy());
+        int i = ContextCompat.checkSelfPermission(this, permissionName);
+        if (i != -1) {
+            proxyViewModel.setProxyStrLiveData(getGlobalProxy());
+        } else {
+            permissionDialog();
+        }
 
         com.chen.globalproxy.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -82,7 +87,25 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
             myAdapter.notifyDataSetChanged();
         });
 //        int i = ContextCompat.checkSelfPermission(this, permissionName);
-//        Log.d(TAG, "checkPermission: " + i);
+        Log.d(TAG, "checkPermission: " + i);
+    }
+
+    private void permissionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("授权方式").setMessage("直接授权需要您的设备已经root")
+                .setPositiveButton("授权", (dialog, which) -> {
+                    Toast.makeText(MainActivity.this, "请授予Root权限", Toast.LENGTH_SHORT).show();
+                    MyTool.execRootCmd(pm);
+                })
+                .setNeutralButton("使用ADB", (dialog, which) -> {
+                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData mClipData = ClipData.newPlainText("Label", msg);
+                    cm.setPrimaryClip(mClipData);
+                    Toast.makeText(MainActivity.this, "已将ADB命令复制到剪贴板", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .setCancelable(false)
+                .show();
     }
 
     @Override
@@ -116,20 +139,7 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
                 Toast.makeText(MainActivity.this, "已取消代理，请重连WIFI", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.authorize:
-                AlertDialog.Builder authBuilder = new AlertDialog.Builder(this);
-                authBuilder.setTitle("授权方式").setMessage("直接授权需要您的设备已经root")
-                        .setPositiveButton("授权", (dialog, which) -> {
-                            Toast.makeText(MainActivity.this, "请授予Root权限", Toast.LENGTH_SHORT).show();
-                            MyTool.execRootCmd(pm);
-                        })
-                        .setNeutralButton("使用ADB", (dialog, which) -> {
-                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData mClipData = ClipData.newPlainText("Label", msg);
-                            cm.setPrimaryClip(mClipData);
-                            Toast.makeText(MainActivity.this, "已将ADB命令复制到剪贴板", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .show();
+                permissionDialog();
                 break;
             case R.id.setting_port: // 菜单栏设置
                 EditPortDialogFragment editPortDialogFragment = new EditPortDialogFragment();
@@ -147,17 +157,6 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-//    /**
-//     * 设置全局代理
-//     *
-//     * @param ipAndPort 代理
-//     */
-//    void setGlobalProxy(String ipAndPort) {
-//        Settings.Global.putString(contentResolver, Settings.Global.HTTP_PROXY, ipAndPort);
-//        proxyViewModel.setProxyStrLiveData(ipAndPort);
-//    }
 
 
     /**
