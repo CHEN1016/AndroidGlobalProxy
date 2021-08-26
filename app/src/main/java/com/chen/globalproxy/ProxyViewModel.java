@@ -18,6 +18,7 @@ import java.util.List;
 public class ProxyViewModel extends AndroidViewModel {
 
     public static final String CUSTOM_CONFIG_KEY = "custom_config";
+
     public static final String PROXY_PORT_KEY = "proxy_key";
 
     private final ProxyRepository proxyRepository;
@@ -58,10 +59,6 @@ public class ProxyViewModel extends AndroidViewModel {
         ContentResolver contentResolver = application.getContentResolver();
         Settings.Global.putString(contentResolver, Settings.Global.HTTP_PROXY, ipAndPort);
     }
-
-//    public Integer getPort() {
-//        return port;
-//    }
 
     public LiveData<List<Proxy>> getProxyLiveData() {
         return proxyRepository.getProxyLiveData();

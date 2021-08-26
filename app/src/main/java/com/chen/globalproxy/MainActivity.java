@@ -86,8 +86,6 @@ public class MainActivity extends AppCompatActivity implements EditPortDialogFra
             myAdapter.setProxyList(proxies);
             myAdapter.notifyDataSetChanged();
         });
-//        int i = ContextCompat.checkSelfPermission(this, permissionName);
-        Log.d(TAG, "checkPermission: " + i);
     }
 
     private void permissionDialog() {

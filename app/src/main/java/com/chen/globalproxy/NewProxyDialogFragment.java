@@ -54,15 +54,12 @@ public class NewProxyDialogFragment extends DialogFragment {
 
         builder.setView(binding.getRoot());
         builder.setTitle("新增代理").
-                setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String ipAddress = binding.ipAddressEditText.getText().toString();
-                        if (ipAddress.equals("") || ipAddress.isEmpty()) {
-                            Toast.makeText(getActivity(), "代理不能为空", Toast.LENGTH_SHORT).show();
-                        } else {
-                            listener.newProxyDialogPositive(ipAddress);
-                        }
+                setPositiveButton(R.string.ok, (dialog, which) -> {
+                    String ipAddress = binding.ipAddressEditText.getText().toString();
+                    if (ipAddress.equals("") || ipAddress.isEmpty()) {
+                        Toast.makeText(getActivity(), "代理不能为空", Toast.LENGTH_SHORT).show();
+                    } else {
+                        listener.newProxyDialogPositive(ipAddress);
                     }
                 })
                 .setNegativeButton(R.string.cancel, null);
